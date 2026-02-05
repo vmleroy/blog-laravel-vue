@@ -7,12 +7,20 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCommentRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $postId = $this->route('postId') ?? $this->route('post_id');
+        if ($postId !== null) {
+            $this->merge(['post_id' => $postId]);
+        }
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +31,7 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'post_id' => 'required|integer|exists:posts,id',
+            'post_id' => 'required|integer|exists:posts_db.posts,id',
             'body' => 'required|string|max:1000',
         ];
     }

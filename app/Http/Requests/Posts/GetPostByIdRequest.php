@@ -8,6 +8,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class GetPostByIdRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $this->merge(['id' => $this->route('id')]);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -24,7 +29,7 @@ class GetPostByIdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|min:1|exists:posts,id',
+            'id' => 'required|integer|min:1|exists:posts_db.posts,id',
         ];
     }
 
