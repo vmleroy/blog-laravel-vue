@@ -2,62 +2,63 @@
   <div class="space-y-4">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Posts</h2>
-      <button
-        v-if="currentUser"
-        @click="$emit('new-post')"
-        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition flex items-center gap-2"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <Button v-if="currentUser" @click="$emit('new-post')">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
         </svg>
         New Post
-      </button>
+      </Button>
     </div>
 
     <div v-if="posts.length === 0" class="text-center text-gray-500">
       No posts found
     </div>
 
-    <div
+    <Card
       v-for="post in posts"
       :key="post.id"
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition cursor-pointer group"
+      hoverable
+      class="cursor-pointer"
       @click="$emit('select-post', post)"
     >
       <div class="flex justify-between items-start mb-2">
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white flex-1 group-hover:text-blue-500 transition">{{ post.title }}</h3>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white flex-1 hover:text-blue-500 transition">{{ post.title }}</h3>
         <div class="flex gap-2 ml-4" @click.stop>
-          <button
+          <Button
             v-if="isOwnPost(post)"
             @click="$emit('edit-post', post)"
-            class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition"
+            size="sm"
           >
             Edit
-          </button>
-          <button
+          </Button>
+          <Button
             v-if="isOwnPost(post) || isAdmin()"
             @click="$emit('delete-post', post.id)"
-            class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded transition"
+            variant="danger"
+            size="sm"
           >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
-      <p class="text-gray-600 dark:text-gray-400 mb-3 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition">{{ getPreview(post.content) }}</p>
+      <p class="text-gray-600 dark:text-gray-400 mb-3">{{ getPreview(post.content) }}</p>
 
       <div class="flex justify-between items-center text-sm text-gray-500">
         <div class="flex flex-col gap-1">
           <span>By <strong>{{ post.author_name }}</strong></span>
           <span>{{ formatDate(post.created_at || post.createdAt) }}</span>
         </div>
-        <span v-if="isRecent(post.updated_at || post.updatedAt)" class="bg-green-100 text-green-800 px-2 py-1 rounded">Recent</span>
+        <Badge v-if="isRecent(post.updated_at || post.updatedAt)" variant="success">Recent</Badge>
       </div>
-    </div>
+    </Card>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Card from '../ui/Card.vue';
+import Button from '../ui/Button.vue';
+import Badge from '../ui/Badge.vue';
 
 const props = defineProps({
   posts: Array,

@@ -21,7 +21,7 @@ class CheckCommentOwnership
         // Check if user is the owner
         $comment = \App\Models\Comments\Comment::find($commentId);
 
-        if (!$comment || $comment->user_id !== $user['id']) {
+        if (!$comment || $comment->user_id !== $user['user_id']) {
             return response()->json([
                 'error' => 'Você não tem permissão para realizar esta ação',
             ], Response::HTTP_FORBIDDEN);

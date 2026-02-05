@@ -21,7 +21,6 @@ class AuthController extends Controller
 
     /**
      * POST /api/v1/auth/login
-     * Autenticar usuário
      */
     public function login(LoginRequest $request): JsonResponse
     {
@@ -40,7 +39,6 @@ class AuthController extends Controller
 
     /**
      * POST /api/v1/auth/register
-     * Registrar novo usuário
      */
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -78,7 +76,6 @@ class AuthController extends Controller
 
     /**
      * POST /api/v1/auth/logout
-     * Logout do usuário
      */
     public function logout(LogoutRequest $request): JsonResponse
     {

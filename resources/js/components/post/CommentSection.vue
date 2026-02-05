@@ -3,21 +3,21 @@
     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Comments</h3>
 
     <div v-if="currentUser" class="mb-6">
-      <form @submit.prevent="submitComment">
-        <textarea
+      <form @submit.prevent="submitComment" class="space-y-2">
+        <Input
+          id="new-comment"
           v-model="newComment"
+          type="textarea"
           placeholder="Add a comment..."
-          class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-          rows="3"
-        ></textarea>
-        <button
+          :rows="3"
+          :error="error"
+        />
+        <Button
           type="submit"
           :disabled="!newComment.trim() || loading"
-          class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition"
         >
           {{ loading ? 'Posting...' : 'Comment' }}
-        </button>
-        <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
+        </Button>
       </form>
     </div>
 
@@ -41,49 +41,50 @@
             <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(comment.created_at) }}</p>
           </div>
           <div class="flex gap-2 ml-4">
-            <span
-              v-if="isArchived(comment.created_at)"
-              class="text-xs bg-gray-400 text-white px-2 py-1 rounded"
-            >
+            <Badge v-if="isArchived(comment.created_at)" variant="default" size="sm">
               Archived
-            </span>
+            </Badge>
             <div class="flex gap-2">
-              <button
+              <Button
                 v-if="canEditComment(comment)"
                 @click="editingCommentId = comment.id; editingCommentBody = comment.body"
-                class="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition"
+                size="sm"
               >
                 Edit
-              </button>
-              <button
+              </Button>
+              <Button
                 v-if="canDeleteComment(comment)"
                 @click="deleteComment(comment.id)"
-                class="px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition"
+                variant="danger"
+                size="sm"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
         </div>
         <div v-if="editingCommentId === comment.id" class="mt-3 space-y-2">
-          <textarea
+          <Input
+            id="edit-comment"
             v-model="editingCommentBody"
-            class="w-full p-2 border rounded dark:bg-gray-600 dark:border-gray-500 dark:text-white text-sm"
-            rows="2"
-          ></textarea>
+            type="textarea"
+            :rows="2"
+          />
           <div class="flex gap-2">
-            <button
+            <Button
               @click="saveEditComment(comment.id)"
-              class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded transition"
+              variant="primary"
+              size="sm"
             >
               Save
-            </button>
-            <button
+            </Button>
+            <Button
               @click="editingCommentId = null"
-              class="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white text-xs rounded transition"
+              variant="secondary"
+              size="sm"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
         <p v-else class="text-gray-800 dark:text-gray-200">{{ formatBody(comment.body) }}</p>
@@ -94,7 +95,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useAuth } from '../composables/useAuth.js';
+import { useAuth } from '../../composables/useAuth.js';
+import Button from '../ui/Button.vue';
+import Input from '../ui/Input.vue';
+import Badge from '../ui/Badge.vue';
 
 const props = defineProps({
   postId: Number,
@@ -159,7 +163,7 @@ const saveEditComment = async (commentId) => {
 
   try {
     await window.axios.put(
-      `/api/v1/posts/${props.postId}/comments/${commentId}`,
+      `/api/v1/comments/${commentId}`,
       { body: editingCommentBody.value }
     );
     const comment = comments.value.find(c => c.id === commentId);
@@ -177,7 +181,7 @@ const deleteComment = async (commentId) => {
   if (confirm('Are you sure you want to delete this comment?')) {
     try {
       await window.axios.delete(
-        `/api/v1/posts/${props.postId}/comments/${commentId}`
+        `/api/v1/comments/${commentId}`
       );
       comments.value = comments.value.filter(c => c.id !== commentId);
     } catch (err) {

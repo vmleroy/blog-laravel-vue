@@ -31,7 +31,7 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $dto = StorePostRequestDTO::fromRequest($request);
-        $userId = $request->attributes->get('user')['id'];
+        $userId = $request->attributes->get('user')['user_id'];
         $post = $this->postService->createPost($dto, $userId);
         return response()->json(PostResponseDTO::fromModel($post), 201);
     }

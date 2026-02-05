@@ -2,45 +2,41 @@
   <div>
     <!-- Tab Navigation -->
     <div class="flex gap-4 mb-6">
-      <button
+      <Button
         @click="isLogin = true"
-        :class="isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'"
-        class="flex-1 py-2 rounded-lg font-medium transition"
+        :variant="isLogin ? 'primary' : 'secondary'"
+        full-width
       >
         Sign In
-      </button>
-      <button
+      </Button>
+      <Button
         @click="isLogin = false"
-        :class="!isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'"
-        class="flex-1 py-2 rounded-lg font-medium transition"
+        :variant="!isLogin ? 'primary' : 'secondary'"
+        full-width
       >
         Register
-      </button>
+      </Button>
     </div>
 
     <!-- Login Form -->
     <form v-if="isLogin" @submit.prevent="handleLogin" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-        <input
-          v-model="loginForm.email"
-          type="email"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="your@email.com"
-          required
-        />
-      </div>
+      <Input
+        id="login-email"
+        v-model="loginForm.email"
+        label="Email"
+        type="email"
+        placeholder="your@email.com"
+        required
+      />
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
-        <input
-          v-model="loginForm.password"
-          type="password"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="••••••••"
-          required
-        />
-      </div>
+      <Input
+        id="login-password"
+        v-model="loginForm.password"
+        label="Password"
+        type="password"
+        placeholder="••••••••"
+        required
+      />
 
       <!-- Error Message -->
       <div v-if="error" class="p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 rounded-lg text-sm">
@@ -62,60 +58,48 @@
         </ul>
       </div>
 
-      <button
-        type="submit"
-        :disabled="loading"
-        class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
-      >
+      <Button type="submit" :disabled="loading" full-width>
         {{ loading ? 'Signing in...' : 'Sign In' }}
-      </button>
+      </Button>
     </form>
 
     <!-- Register Form -->
     <form v-else @submit.prevent="handleRegister" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
-        <input
-          v-model="registerForm.name"
-          type="text"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Your name"
-          required
-        />
-      </div>
+      <Input
+        id="register-name"
+        v-model="registerForm.name"
+        label="Full Name"
+        type="text"
+        placeholder="Your name"
+        required
+      />
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-        <input
-          v-model="registerForm.email"
-          type="email"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="your@email.com"
-          required
-        />
-      </div>
+      <Input
+        id="register-email"
+        v-model="registerForm.email"
+        label="Email"
+        type="email"
+        placeholder="your@email.com"
+        required
+      />
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
-        <input
-          v-model="registerForm.password"
-          type="password"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="••••••••"
-          required
-        />
-      </div>
+      <Input
+        id="register-password"
+        v-model="registerForm.password"
+        label="Password"
+        type="password"
+        placeholder="••••••••"
+        required
+      />
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password</label>
-        <input
-          v-model="registerForm.password_confirmation"
-          type="password"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="••••••••"
-          required
-        />
-      </div>
+      <Input
+        id="register-password-confirm"
+        v-model="registerForm.password_confirmation"
+        label="Confirm Password"
+        type="password"
+        placeholder="••••••••"
+        required
+      />
 
       <!-- Error Message -->
       <div v-if="error" class="p-4 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 rounded-lg text-sm">
@@ -137,19 +121,17 @@
         </ul>
       </div>
 
-      <button
-        type="submit"
-        :disabled="loading"
-        class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
-      >
+      <Button type="submit" :disabled="loading" full-width>
         {{ loading ? 'Registering...' : 'Register' }}
-      </button>
+      </Button>
     </form>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Button from '../ui/Button.vue';
+import Input from '../ui/Input.vue';
 
 const emit = defineEmits(['login']);
 

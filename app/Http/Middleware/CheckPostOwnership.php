@@ -21,7 +21,7 @@ class CheckPostOwnership
         // Check if user is the owner
         $post = \App\Models\Posts\Post::find($postId);
 
-        if (!$post || $post->user_id !== $user['id']) {
+        if (!$post || $post->user_id !== $user['user_id']) {
             return response()->json([
                 'error' => 'Você não tem permissão para realizar esta ação',
             ], Response::HTTP_FORBIDDEN);

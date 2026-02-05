@@ -75,27 +75,19 @@
     <PostForm :post="editingPost" :is-editing="!!editingPost" @close="closePostModal" @saved="handlePostSaved" :show-buttons="false" />
     <template #footer>
       <div class="flex gap-4">
-        <button
-          type="button"
-          @click="closePostModal"
-          class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition"
-        >
+        <Button variant="secondary" full-width @click="closePostModal">
           Cancel
-        </button>
-        <button
-          type="submit"
-          form="post-form"
-          class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
-        >
+        </Button>
+        <Button type="submit" form="post-form" full-width>
           {{ editingPost ? 'Update' : 'Create' }}
-        </button>
+        </Button>
       </div>
     </template>
   </Modal>
 
   <!-- Login Modal -->
   <Modal :model-value="showLoginModal" title="Laravel Blog" @close="showLoginModal = false">
-    <LoginPage @login="handleLoginModal" @close="showLoginModal = false" :show-buttons="false" />
+    <AuthForm @login="handleLoginModal" @close="showLoginModal = false" :show-buttons="false" />
   </Modal>
 
   <!-- Post Detail Modal -->
@@ -107,12 +99,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '../composables/useAuth.js';
-import Modal from './Modal.vue';
-import LoginPage from './LoginPage.vue';
-import PostForm from './PostForm.vue';
-import PostList from './PostList.vue';
-import PostDetail from './PostDetail.vue';
-import ApiTester from './ApiTester.vue';
+import Modal from '../components/ui/Modal.vue';
+import Button from '../components/ui/Button.vue';
+import AuthForm from '../components/auth/AuthForm.vue';
+import PostForm from '../components/post/PostForm.vue';
+import PostList from '../components/post/PostList.vue';
+import PostDetail from '../components/post/PostDetail.vue';
+import ApiTester from '../components/ApiTester.vue';
 
 const { isAuthenticated, currentUser, initializeAuth, setAuth, logout } = useAuth();
 
