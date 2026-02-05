@@ -26,9 +26,9 @@ class GatewayGetUserRoleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'O ID do usuário é obrigatório',
-            'user_id.integer' => 'O ID do usuário deve ser um número inteiro',
-            'user_id.min' => 'O ID do usuário deve ser maior que 0',
+            'user_id.required' => 'The user ID is required',
+            'user_id.integer' => 'The user ID must be an integer',
+            'user_id.min' => 'The user ID must be greater than 0',
         ];
     }
 }

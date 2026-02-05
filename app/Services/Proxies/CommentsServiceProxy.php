@@ -3,8 +3,6 @@
 namespace App\Services\Proxies;
 
 use App\Services\Comments\CommentService;
-use App\Models\Comments\Comment;
-use App\Services\MessageQueue\ServiceMessenger;
 use App\DTOs\Requests\Comments\StoreCommentDTO;
 use App\DTOs\Requests\Comments\GetCommentRequestDTO;
 use App\DTOs\Requests\Comments\GetCommentByPostIdDTO;
@@ -25,13 +23,7 @@ class CommentsServiceProxy
         if ($postId) {
             return $this->getCommentsByPost($postId);
         }
-        // Return all comments with author names via ServiceMessenger
-        return Comment::all()->map(function ($comment) {
-            $userInfo = ServiceMessenger::send('auth', 'getUserInfo', ['user_id' => $comment->user_id]);
-            $commentArray = $comment->toArray();
-            $commentArray['author_name'] = $userInfo['name'];
-            return $commentArray;
-        })->toArray();
+        return $this->commentService->getAllComments()->toArray();
     }
 
     /**

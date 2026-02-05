@@ -1,59 +1,222 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📝 Laravel Blog - Microservices Architecture Simulation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern blog application built with **Laravel 12** and **Vue 3** that simulates a microservices architecture within a monolithic application. This project demonstrates how to structure a Laravel application with clear service boundaries, inter-service communication patterns, and a gateway API layer.
 
-## About Laravel
+## 🎯 What This Project Represents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This is an **educational project** that simulates microservices architecture patterns in a monolithic Laravel application. It showcases:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Service-Oriented Architecture**: Clear separation between Auth, Posts, Comments, and RBAC services
+- **API Gateway Pattern**: Single entry point for all client requests via `/api/gateway`
+- **Service Mesh Simulation**: Inter-service communication using a custom `ServiceMessenger` class
+- **DTO Pattern**: Type-safe data transfer objects for all service operations
+- **Proxy Pattern**: Service proxies that abstract internal service communication
+- **JWT Authentication**: Custom token-based authentication without Laravel Sanctum/Passport
+- **RBAC System**: Role-Based Access Control with permissions and content-level access
+- **Modern Frontend**: Vue 3 with Composition API, Tailwind CSS 4, and Vite
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🏗️ Architecture Overview
 
-## Learning Laravel
+```
+┌─────────────┐
+│   Vue 3 SPA │ (Frontend)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────┐
+│   API Gateway       │ (/api/gateway/*)
+│  (Laravel Routes)   │
+└──────┬──────────────┘
+       │
+       ▼
+┌──────────────────────────────────────┐
+│        Service Messenger             │
+│   (Inter-Service Communication)      │
+└────┬─────────┬─────────┬────────┬────┘
+     │         │         │        │
+     ▼         ▼         ▼        ▼
+┌────────┐ ┌───────┐ ┌──────────┐ ┌──────┐
+│  Auth  │ │ Posts │ │ Comments │ │ RBAC │
+│Service │ │Service│ │ Service  │ │Service│
+└────────┘ └───────┘ └──────────┘ └──────┘
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Each service has its own:
+- **Models**: Data layer (Eloquent)
+- **DTOs**: Request/Response data structures
+- **Service Layer**: Business logic
+- **Proxy**: External interface for other services
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ✨ Features
 
-## Laravel Sponsors
+- 🔐 Custom JWT authentication system
+- 📄 CRUD operations for blog posts
+- 💬 Comments system
+- 👥 Role-Based Access Control (RBAC)
+- 🎨 Modern UI with Tailwind CSS 4
+- 🔄 Real-time data updates
+- 📱 Responsive design
+- 🧪 Microservices simulation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Tech Stack
 
-### Premium Partners
+**Backend:**
+- Laravel 12
+- PHP 8.2+
+- SQLite
+- Custom JWT implementation
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+**Frontend:**
+- Vue 3 (Composition API)
+- Vite 7
+- Tailwind CSS 4
+- Axios
 
-## Contributing
+## 📋 Prerequisites
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Before you begin, ensure you have installed:
 
-## Code of Conduct
+- **PHP 8.2** or higher
+- **Composer**
+- **Node.js 18+** and **npm**
+- **SQLite**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🚀 Installation & Setup
 
-## Security Vulnerabilities
+### 1. Clone the repository
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+git clone https://github.com/vmleroy/blog-laravel-vue.git
+cd blog-laravel-vue
+```
 
-## License
+### 2. Install PHP dependencies
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+composer install
+```
+
+### 3. Install Node.js dependencies
+
+```bash
+npm install
+```
+
+### 4. Environment configuration
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+### 5. Database setup
+
+```bash
+# Create SQLite database file
+touch database/database.sqlite
+
+# Run migrations
+php artisan migrate
+
+# Seed the database with sample data
+php artisan db:seed
+```
+
+This will create:
+- Sample users with different roles (admin, editor, viewer)
+- Blog posts with authors
+- Comments on posts
+- RBAC roles and permissions
+
+### 6. Start the development servers
+
+You'll need **two terminal windows**:
+
+**Terminal 1 - Laravel Backend:**
+```bash
+php artisan serve
+```
+Backend will run on: `http://localhost:8000`
+
+**Terminal 2 - Vite Frontend:**
+```bash
+npm run dev
+```
+Frontend assets will be served via Vite
+
+### 7. Access the application
+
+Open your browser and navigate to:
+```
+http://localhost:8000
+```
+
+## 👤 Default Users
+
+After seeding, you can login with:
+
+| Email | Password | Role |
+|-------|----------|------|
+| admin@example.com | password123 | Admin
+| joao@example.com  | password123 | User
+| maria@example.com | password123 | User
+
+## 📁 Project Structure
+
+```
+app/
+├── DTOs/                    # Data Transfer Objects
+│   ├── Requests/            # Request DTOs for each service
+│   └── Responses/           # Response DTOs
+│
+├── Http/
+│   ├── Controllers/
+│   │   └── Gateway/         # API Gateway Controllers
+│   ├── Middleware/          # Custom middleware (JWT auth)
+│   └── Requests/            # Custom form requests
+│
+├── Models/                  # Eloquent Models organized by service
+│   ├── Auth/
+│   ├── Comments/
+│   ├── Posts/
+│   └── RoleBasedAccess/
+│
+├── Providers/
+│   └── MessengerServiceProvider.php  # Service registration
+│
+└── Services/                # Service Layer (business logic)
+    ├── Auth/
+    ├── Comments/
+    ├── MessageQueue/        # ServiceMessenger implementation
+    ├── Posts/
+    ├── Proxies/             # Service Proxies
+    └── RoleBasedAccess/
+
+resources/
+├── js/
+│   ├── api/                 # API client (gatewayApi.js)
+│   ├── components/          # Vue components
+│   ├── composables/         # Vue composables
+│   └── pages/               # Vue pages
+│
+└── views/                   # Blade template (SPA entry point)
+
+routes/
+├── api.php                  # Standard API routes
+├── gateway.php              # Gateway API routes
+└── web.php                  # Web routes
+```
+
+## 📝 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Acknowledgments
+
+- Built with [Laravel](https://laravel.com) framework
+- Frontend powered by [Vue.js](https://vuejs.org)
+- Styled with [Tailwind CSS](https://tailwindcss.com)
+- Inspired by microservices architecture patterns

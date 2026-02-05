@@ -55,6 +55,12 @@ class PostService
         return $post;
     }
 
+    public function deletePost(DeletePostRequestDTO $data): void
+    {
+        $post = Post::findOrFail($data->id);
+        $post->delete();
+    }
+
     private function enrichPostWithAuthor($post)
     {
         // Use ServiceMessenger to get user info from Auth service
@@ -62,11 +68,5 @@ class PostService
 
         // Add author_name as a dynamic attribute
         $post->author_name = $userInfo['name'];
-    }
-
-    public function deletePost(DeletePostRequestDTO $data): void
-    {
-        $post = Post::findOrFail($data->id);
-        $post->delete();
     }
 }

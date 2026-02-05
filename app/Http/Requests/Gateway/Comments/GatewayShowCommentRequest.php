@@ -26,9 +26,9 @@ class GatewayShowCommentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id.required' => 'O ID do comentário é obrigatório',
-            'id.integer' => 'O ID do comentário deve ser um número inteiro',
-            'id.min' => 'O ID do comentário deve ser maior que 0',
+            'id.required' => 'The comment ID is required',
+            'id.integer' => 'The comment ID must be an integer',
+            'id.min' => 'The comment ID must be greater than 0',
         ];
     }
 }

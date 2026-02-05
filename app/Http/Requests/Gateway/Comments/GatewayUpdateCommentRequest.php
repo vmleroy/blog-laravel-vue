@@ -27,12 +27,12 @@ class GatewayUpdateCommentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id.required' => 'O ID do comentário é obrigatório',
-            'id.integer' => 'O ID do comentário deve ser um número inteiro',
-            'id.min' => 'O ID do comentário deve ser maior que 0',
-            'body.required' => 'O comentário não pode estar vazio',
-            'body.min' => 'O comentário deve ter no mínimo 3 caracteres',
-            'body.max' => 'O comentário deve ter no máximo 1000 caracteres',
+            'id.required' => 'The comment ID is required',
+            'id.integer' => 'The comment ID must be an integer',
+            'id.min' => 'The comment ID must be greater than 0',
+            'body.required' => 'The comment cannot be empty',
+            'body.min' => 'The comment must have at least 3 characters',
+            'body.max' => 'The comment must have at most 1000 characters',
         ];
     }
 }

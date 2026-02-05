@@ -23,12 +23,12 @@ class GatewayRegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'O nome é obrigatório',
-            'name.min' => 'O nome deve ter no mínimo 3 caracteres',
-            'email.required' => 'O email é obrigatório',
-            'email.email' => 'Por favor, forneça um email válido',
-            'password.required' => 'A senha é obrigatória',
-            'password.min' => 'A senha deve ter no mínimo 6 caracteres',
+            'name.required' => 'The name is required',
+            'name.min' => 'The name must have at least 3 characters',
+            'email.required' => 'The email is required',
+            'email.email' => 'Please provide a valid email',
+            'password.required' => 'The password is required',
+            'password.min' => 'The password must have at least 6 characters',
         ];
     }
 }

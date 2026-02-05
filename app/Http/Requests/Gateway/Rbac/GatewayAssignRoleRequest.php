@@ -22,12 +22,12 @@ class GatewayAssignRoleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'O ID do usuário é obrigatório',
-            'user_id.integer' => 'O ID do usuário deve ser um número inteiro',
-            'user_id.min' => 'O ID do usuário deve ser maior que 0',
-            'role_id.required' => 'O ID da role é obrigatório',
-            'role_id.integer' => 'O ID da role deve ser um número inteiro',
-            'role_id.min' => 'O ID da role deve ser maior que 0',
+            'user_id.required' => 'The user ID is required',
+            'user_id.integer' => 'The user ID must be an integer',
+            'user_id.min' => 'The user ID must be greater than 0',
+            'role_id.required' => 'The role ID is required',
+            'role_id.integer' => 'The role ID must be an integer',
+            'role_id.min' => 'The role ID must be greater than 0',
         ];
     }
 }

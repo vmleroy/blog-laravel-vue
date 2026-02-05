@@ -26,9 +26,9 @@ class GatewayShowPostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id.required' => 'O ID do post é obrigatório',
-            'id.integer' => 'O ID do post deve ser um número inteiro',
-            'id.min' => 'O ID do post deve ser maior que 0',
+            'id.required' => 'The post ID is required',
+            'id.integer' => 'The post ID must be an integer',
+            'id.min' => 'The post ID must be greater than 0',
         ];
     }
 }

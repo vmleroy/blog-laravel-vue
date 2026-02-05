@@ -52,16 +52,13 @@ class GatewayAuth
     private function validateToken(string $token): array
     {
         $parts = explode('.', $token);
-
         if (count($parts) !== 3) {
             throw new \Exception('Invalid token format');
         }
-
         [$headerEncoded, $payloadEncoded, $signatureEncoded] = $parts;
 
         // Decode payload
         $payload = json_decode(base64_decode($payloadEncoded), true);
-
         if (!$payload) {
             throw new \Exception('Invalid token payload');
         }
@@ -70,7 +67,6 @@ class GatewayAuth
         $secret = $this->getSecretKey();
         $signature = hash_hmac('sha256', "{$headerEncoded}.{$payloadEncoded}", $secret, true);
         $signatureBase64 = base64_encode($signature);
-
         if (!hash_equals($signatureBase64, $signatureEncoded)) {
             throw new \Exception('Invalid token signature');
         }
@@ -83,10 +79,6 @@ class GatewayAuth
         return $payload;
     }
 
-    /**
-     * Get the secret key for JWT validation
-     * Handles base64-encoded keys like 'base64:xxx'
-     */
     private function getSecretKey(): string
     {
         $key = config('app.key');

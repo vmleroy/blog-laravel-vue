@@ -22,10 +22,10 @@ class GatewayLoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'O email é obrigatório',
-            'email.email' => 'Por favor, forneça um email válido',
-            'password.required' => 'A senha é obrigatória',
-            'password.min' => 'A senha deve ter no mínimo 6 caracteres',
+            'email.required' => 'The email is required',
+            'email.email' => 'Please provide a valid email',
+            'password.required' => 'The password is required',
+            'password.min' => 'The password must have at least 6 characters',
         ];
     }
 }

@@ -46,6 +46,7 @@ class MessengerServiceProvider extends ServiceProvider
         ServiceMessenger::register('rbac', function (string $action, array $params) {
             $service = new RoleBasedAccessService();
             return match ($action) {
+                'getUserRole' => $service->getUserRole($params['user_id'])?->toArray(),
                 default => throw new \Exception("Unknown rbac action: {$action}", 400),
             };
         });

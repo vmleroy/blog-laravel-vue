@@ -21,7 +21,7 @@ class GatewayRefreshTokenRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'token.required' => 'O token é obrigatório',
+            'token.required' => 'The token is required',
         ];
     }
 }

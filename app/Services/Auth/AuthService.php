@@ -7,24 +7,24 @@ use App\DTOs\Requests\Auth\RegisterRequestDTO;
 use App\DTOs\Requests\Auth\RefreshTokenRequestDTO;
 use App\DTOs\Requests\Auth\LogoutRequestDTO;
 use App\Models\Auth\User;
+use App\Services\MessageQueue\ServiceMessenger;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AuthService
 {
     /**
-     * Autenticar usuário com email e senha
+     * Authenticate user with email and password
      */
     public function login(LoginRequestDTO $data): array
     {
         $user = User::where('email', $data->email)->first();
 
         if (!$user || !Hash::check($data->password, $user->password)) {
-            throw new \Exception('Credenciais inválidas', 401);
+            throw new \Exception('Invalid credentials', 401);
         }
 
         if (!$user->is_active) {
-            throw new \Exception('Usuário inativo', 403);
+            throw new \Exception('Inactive user', 403);
         }
 
         $token = $this->generateToken($user);
@@ -37,18 +37,18 @@ class AuthService
             'role' => $role,
             'token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => 86400, // 24 horas
+            'expires_in' => 86400, // 24 hours
         ];
     }
 
     /**
-     * Registrar novo usuário
+     * Register new user
      */
     public function register(RegisterRequestDTO $data): array
     {
         $userExists = User::where('email', $data->email)->exists();
         if ($userExists) {
-            throw new \Exception('Email já registrado', 409);
+            throw new \Exception('Email already registered', 409);
         }
 
         $user = User::create([
@@ -73,7 +73,7 @@ class AuthService
     }
 
     /**
-     * Renovar token
+     * Refresh token
      */
     public function refreshToken(RefreshTokenRequestDTO $data): array
     {
@@ -100,48 +100,44 @@ class AuthService
     }
 
     /**
-     * Logout do usuário
+     * User logout
      */
     public function logout(LogoutRequestDTO $data): void
     {
-        // Validar token
         $this->validateToken($data->token);
 
-        // Em um sistema real, você poderia invalidar tokens em uma blacklist
-        // Por enquanto, apenas validamos que o token é válido
     }
 
     /**
-     * Validar token JWT
+     * Validate JWT token
      */
     public function validateToken(string $token): array
     {
         try {
             $parts = explode('.', $token);
             if (count($parts) !== 3) {
-                throw new \Exception('Token inválido');
+                throw new \Exception('Invalid token');
             }
 
-            // Decodificar payload (sem validação de assinatura por simplicidade)
+            // Decode payload
             $payload = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $parts[1])), true);
-
             if (!$payload || !isset($payload['user_id'])) {
-                throw new \Exception('Token inválido');
+                throw new \Exception('Invalid token');
             }
 
-            // Verificar expiração
+            // Check expiration
             if (isset($payload['exp']) && $payload['exp'] < time()) {
-                throw new \Exception('Token expirado', 401);
+                throw new \Exception('Token expired', 401);
             }
 
             return $payload;
         } catch (\Exception $e) {
-            throw new \Exception('Token inválido: ' . $e->getMessage(), 401);
+            throw new \Exception('Invalid token: ' . $e->getMessage(), 401);
         }
     }
 
     /**
-     * Gerar JWT token
+     * Generate JWT token
      */
     private function generateToken(User $user): string
     {
@@ -151,7 +147,7 @@ class AuthService
             'email' => $user->email,
             'name' => $user->name,
             'iat' => time(),
-            'exp' => time() + 86400, // 24 horas
+            'exp' => time() + 86400, // 24 hours
         ]));
 
         $secret = $this->getSecretKey();
@@ -202,13 +198,15 @@ class AuthService
     }
 
     /**
-     * Obter papel do usuário
+     * Get user role
      */
     private function getUserRole(int $userId): ?string
     {
-        $rbacService = app(\App\Services\RoleBasedAccess\RoleBasedAccessService::class);
-        $role = $rbacService->getUserRole($userId);
-
-        return $role ? $role->name : null;
+        try {
+            $result = ServiceMessenger::send('rbac', 'getUserRole', ['user_id' => $userId]);
+            return $result['name'] ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

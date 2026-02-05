@@ -22,12 +22,12 @@ class GatewayCheckAccessRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'O ID do usuário é obrigatório',
-            'user_id.integer' => 'O ID do usuário deve ser um número inteiro',
-            'user_id.min' => 'O ID do usuário deve ser maior que 0',
-            'permission_name.required' => 'O nome da permissão é obrigatório',
-            'permission_name.min' => 'O nome da permissão deve ter no mínimo 3 caracteres',
-            'permission_name.max' => 'O nome da permissão deve ter no máximo 100 caracteres',
+            'user_id.required' => 'The user ID is required',
+            'user_id.integer' => 'The user ID must be an integer',
+            'user_id.min' => 'The user ID must be greater than 0',
+            'permission_name.required' => 'The permission name is required',
+            'permission_name.min' => 'The permission name must have at least 3 characters',
+            'permission_name.max' => 'The permission name must have at most 100 characters',
         ];
     }
 }

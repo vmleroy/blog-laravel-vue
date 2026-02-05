@@ -22,12 +22,12 @@ class GatewayStoreCommentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'post_id.required' => 'O ID do post é obrigatório',
-            'post_id.integer' => 'O ID do post deve ser um número inteiro',
-            'post_id.min' => 'O ID do post deve ser maior que 0',
-            'body.required' => 'O comentário não pode estar vazio',
-            'body.min' => 'O comentário deve ter no mínimo 3 caracteres',
-            'body.max' => 'O comentário deve ter no máximo 1000 caracteres',
+            'post_id.required' => 'The post ID is required',
+            'post_id.integer' => 'The post ID must be an integer',
+            'post_id.min' => 'The post ID must be greater than 0',
+            'body.required' => 'The comment cannot be empty',
+            'body.min' => 'The comment must have at least 3 characters',
+            'body.max' => 'The comment must have at most 1000 characters',
         ];
     }
 }

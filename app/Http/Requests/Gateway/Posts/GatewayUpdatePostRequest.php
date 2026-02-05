@@ -22,11 +22,11 @@ class GatewayUpdatePostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'O título é obrigatório',
-            'title.min' => 'O título deve ter no mínimo 5 caracteres',
-            'title.max' => 'O título deve ter no máximo 255 caracteres',
-            'content.required' => 'O conteúdo é obrigatório',
-            'content.min' => 'O conteúdo deve ter no mínimo 10 caracteres',
+            'title.required' => 'The title is required',
+            'title.min' => 'The title must have at least 5 characters',
+            'title.max' => 'The title must have at most 255 characters',
+            'content.required' => 'The content is required',
+            'content.min' => 'The content must have at least 10 characters',
         ];
     }
 }

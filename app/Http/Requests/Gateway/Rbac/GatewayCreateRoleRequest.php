@@ -22,10 +22,10 @@ class GatewayCreateRoleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'O nome da role é obrigatório',
-            'name.min' => 'O nome da role deve ter no mínimo 3 caracteres',
-            'name.max' => 'O nome da role deve ter no máximo 100 caracteres',
-            'description.max' => 'A descrição deve ter no máximo 255 caracteres',
+            'name.required' => 'The role name is required',
+            'name.min' => 'The role name must have at least 3 characters',
+            'name.max' => 'The role name must have at most 100 characters',
+            'description.max' => 'The description must have at most 255 characters',
         ];
     }
 }

@@ -12,6 +12,15 @@ use App\Services\MessageQueue\ServiceMessenger;
 
 class CommentService
 {
+    public function getAllComments()
+    {
+        $comments = Comment::all();
+        return $comments->map(function ($comment) {
+            $this->enrichCommentWithAuthor($comment);
+            return $comment;
+        });
+    }
+
     public function getCommentsByPost(GetCommentByPostIdDTO $data)
     {
         $comments = Comment::where('post_id', $data->post_id)->get();
@@ -55,18 +64,15 @@ class CommentService
         return $comment;
     }
 
-    private function enrichCommentWithAuthor($comment)
-    {
-        // Use ServiceMessenger to get user info from Auth service
-        $userInfo = ServiceMessenger::send('auth', 'getUserInfo', ['user_id' => $comment->user_id]);
-
-        // Add author_name as a dynamic attribute
-        $comment->author_name = $userInfo['name'];
-    }
-
     public function deleteComment(DeleteCommentRequestDTO $data): void
     {
         $comment = Comment::findOrFail($data->id);
         $comment->delete();
+    }
+
+    private function enrichCommentWithAuthor($comment)
+    {
+        $userInfo = ServiceMessenger::send('auth', 'getUserInfo', ['user_id' => $comment->user_id]);
+        $comment->author_name = $userInfo['name'];
     }
 }

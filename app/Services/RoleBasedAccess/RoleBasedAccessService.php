@@ -86,7 +86,7 @@ class RoleBasedAccessService
     }
 
     /**
-     * access_level: 0 = sem acesso, 1 = visualizar, 2 = editar, 3 = deletar
+     * access_level: 0 = no access, 1 = view, 2 = edit, 3 = delete
      */
     public function checkContentAccess(CheckContentAccessRequestDTO $data, int $requiredLevel = 1): bool
     {
