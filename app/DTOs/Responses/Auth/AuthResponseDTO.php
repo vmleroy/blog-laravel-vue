@@ -9,6 +9,7 @@ class AuthResponseDTO
         public string $email,
         public string $name,
         public string $token,
+        public ?string $role = null,
         public string $token_type = 'Bearer',
         public ?int $expires_in = null,
     ) {
@@ -21,6 +22,7 @@ class AuthResponseDTO
             email: $data['email'],
             name: $data['name'],
             token: $data['token'],
+            role: $data['role'] ?? null,
             token_type: $data['token_type'] ?? 'Bearer',
             expires_in: $data['expires_in'] ?? null,
         );

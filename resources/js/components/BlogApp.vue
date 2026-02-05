@@ -62,7 +62,7 @@
     </nav>
 
     <main v-if="!showTester" class="max-w-4xl mx-auto px-6 py-8">
-      <PostList :posts="posts" :current-user="currentUser" @select-post="selectedPost = $event" @new-post="showNewPostModal = true" />
+      <PostList :posts="posts" :current-user="currentUser" @select-post="selectedPost = $event" @new-post="showNewPostModal = true" @edit-post="handleEditPost" @delete-post="handleDeletePost" />
     </main>
 
     <ApiTester v-else />
@@ -70,41 +70,44 @@
     <NotificationCenter />
   </div>
 
-  <!-- Post Form Modal using Teleport -->
-  <teleport to="body">
-    <div v-if="showNewPostModal" class="fixed inset-0 flex items-center justify-center p-4 z-50" style="backdrop-filter: blur(4px); background-color: rgba(0, 0, 0, 0.1);" @click.self="showNewPostModal = false">
-      <div class="relative">
+  <!-- Post Form Modal -->
+  <Modal :model-value="showNewPostModal || !!editingPost" :title="editingPost ? 'Edit Post' : 'Create Post'" @close="closePostModal">
+    <PostForm :post="editingPost" :is-editing="!!editingPost" @close="closePostModal" @saved="handlePostSaved" :show-buttons="false" />
+    <template #footer>
+      <div class="flex gap-4">
         <button
-          @click="showNewPostModal = false"
-          class="absolute -top-10 right-0 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+          type="button"
+          @click="closePostModal"
+          class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
+          Cancel
         </button>
-        <PostForm :is-editing="false" @close="showNewPostModal = false" @saved="handlePostSaved" />
+        <button
+          type="submit"
+          form="post-form"
+          class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
+        >
+          {{ editingPost ? 'Update' : 'Create' }}
+        </button>
       </div>
-    </div>
-  </teleport>
+    </template>
+  </Modal>
 
-  <!-- Login Modal using Teleport -->
-  <teleport to="body">
-    <div v-if="showLoginModal" class="fixed inset-0 flex items-center justify-center p-4 z-50" style="backdrop-filter: blur(4px); background-color: rgba(0, 0, 0, 0.1);" @click.self="showLoginModal = false">
-      <LoginPage @login="handleLoginModal" @close="showLoginModal = false" />
-    </div>
-  </teleport>
+  <!-- Login Modal -->
+  <Modal :model-value="showLoginModal" title="Laravel Blog" @close="showLoginModal = false">
+    <LoginPage @login="handleLoginModal" @close="showLoginModal = false" :show-buttons="false" />
+  </Modal>
 
-  <!-- Post Detail Modal using Teleport -->
-  <teleport to="body">
-    <div v-if="selectedPost" class="fixed inset-0 flex items-center justify-center p-4 z-50" style="backdrop-filter: blur(4px); background-color: rgba(0, 0, 0, 0.1);" @click.self="selectedPost = null">
-      <PostDetail :post="selectedPost" @close="selectedPost = null" />
-    </div>
-  </teleport>
+  <!-- Post Detail Modal -->
+  <Modal :model-value="!!selectedPost" title="Post Details" @close="selectedPost = null">
+    <PostDetail :post="selectedPost" @close="selectedPost = null" />
+  </Modal>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '../composables/useAuth.js';
+import Modal from './Modal.vue';
 import LoginPage from './LoginPage.vue';
 import PostForm from './PostForm.vue';
 import PostList from './PostList.vue';
@@ -119,6 +122,7 @@ const showTester = ref(false);
 const showUserMenu = ref(false);
 const showLoginModal = ref(false);
 const showNewPostModal = ref(false);
+const editingPost = ref(null);
 
 const handleLoginModal = async (authData) => {
   setAuth(authData);
@@ -154,9 +158,29 @@ const handlePostCreated = (newPost) => {
 };
 
 const handlePostSaved = (newPost) => {
-  showNewPostModal.value = false;
+  closePostModal();
   posts.value = [newPost, ...posts.value];
   loadPosts();
+};
+
+const handleEditPost = (post) => {
+  editingPost.value = post;
+};
+
+const handleDeletePost = async (postId) => {
+  if (confirm('Are you sure you want to delete this post?')) {
+    try {
+      await window.axios.delete(`/api/v1/posts/${postId}`);
+      posts.value = posts.value.filter(p => p.id !== postId);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  }
+};
+
+const closePostModal = () => {
+  showNewPostModal.value = false;
+  editingPost.value = null;
 };
 
 onMounted(() => {
