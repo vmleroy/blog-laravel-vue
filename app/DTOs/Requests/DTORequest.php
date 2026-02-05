@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 readonly abstract class DTORequest
 {
+    public function __construct(...$args)
+    {
+        // Assign properties in child classes as needed
+    }
+
     public static function fromRequest(Request $request): static
     {
         $validated = $request->validated();
