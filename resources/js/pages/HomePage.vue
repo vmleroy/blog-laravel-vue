@@ -132,8 +132,8 @@ const handleLogin = async (authData) => {
 const handleLogout = async () => {
   await logout();
   selectedPost.value = null;
-  posts.value = [];
   showUserMenu.value = false;
+  await loadPosts(); // Reload posts after logout to show public posts
 };
 
 const loadPosts = async () => {
