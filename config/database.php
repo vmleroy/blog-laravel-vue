@@ -125,6 +125,18 @@ return [
             'prefix' => '',
         ],
 
+        'auth_db' => [
+            'driver' => 'sqlite',
+            'database' => database_path('database_auth.sqlite'),
+            'prefix' => '',
+        ],
+
+        'rbac_db' => [
+            'driver' => 'sqlite',
+            'database' => database_path('database_rbac.sqlite'),
+            'prefix' => '',
+        ],
+
     ],
 
     /*

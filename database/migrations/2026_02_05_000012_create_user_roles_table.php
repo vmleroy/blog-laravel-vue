@@ -10,11 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::connection('comments_db')->create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('post_id'); // Apenas o ID, sem foreign key física!
-            $table->text('body');
-            $table->timestamps();
+        Schema::connection('rbac_db')->create('user_roles', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('role_id');
+            $table->unique(['user_id', 'role_id']);
         });
     }
 
@@ -23,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::connection('rbac_db')->dropIfExists('user_roles');
     }
 };

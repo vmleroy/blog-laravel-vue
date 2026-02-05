@@ -15,11 +15,12 @@ class PostService
         return Post::all();
     }
 
-    public function createPost(StorePostRequestDTO $data): Post
+    public function createPost(StorePostRequestDTO $data, int $userId): Post
     {
         $post = Post::create([
             'title' => $data->title,
             'content' => $data->content,
+            'user_id' => $userId,
         ]);
 
         return $post;

@@ -1,9 +1,21 @@
 <template>
   <div class="space-y-4">
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Posts</h2>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Posts</h2>
+      <button
+        v-if="currentUser"
+        @click="$emit('new-post')"
+        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition flex items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        New Post
+      </button>
+    </div>
 
     <div v-if="posts.length === 0" class="text-center text-gray-500">
-      Nenhum post encontrado
+      No posts found
     </div>
 
     <div
@@ -16,17 +28,25 @@
       <p class="text-gray-600 dark:text-gray-400 mb-3">{{ getPreview(post.content) }}</p>
 
       <div class="flex justify-between items-center text-sm text-gray-500">
-        <span>{{ formatDate(post.createdAt) }}</span>
-        <span v-if="isRecent(post.updatedAt)" class="bg-green-100 text-green-800 px-2 py-1 rounded">Recente</span>
+        <div class="flex flex-col gap-1">
+          <span>By <strong>{{ post.author_name }}</strong></span>
+          <span>{{ formatDate(post.createdAt) }}</span>
+        </div>
+        <span v-if="isRecent(post.updatedAt)" class="bg-green-100 text-green-800 px-2 py-1 rounded">Recent</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref } from 'vue';
+
+const props = defineProps({
   posts: Array,
+  currentUser: Object,
 });
+
+const emit = defineEmits(['select-post', 'new-post']);
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('pt-BR');

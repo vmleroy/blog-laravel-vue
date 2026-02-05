@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     protected $connection = 'comments_db';
-    protected $fillable = ['post_id', 'body'];
+    protected $fillable = ['user_id', 'post_id', 'body'];
 }

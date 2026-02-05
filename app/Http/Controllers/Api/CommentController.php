@@ -34,7 +34,8 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request, $postId)
     {
         $dto = StoreCommentDTO::fromRequest($request);
-        $comment = $this->commentService->createComment($dto);
+        $userId = $request->attributes->get('user')['id'];
+        $comment = $this->commentService->createComment($dto, $userId);
         return response()->json(CommentResponseDTO::fromModel($comment), 201);
     }
 

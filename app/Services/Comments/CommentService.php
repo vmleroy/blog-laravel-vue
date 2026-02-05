@@ -16,11 +16,12 @@ class CommentService
         return Comment::where('post_id', $data->post_id)->get();
     }
 
-    public function createComment(StoreCommentDTO $data): Comment
+    public function createComment(StoreCommentDTO $data, int $userId): Comment
     {
         $comment = Comment::create([
             'post_id' => $data->post_id,
-            'body' => $data->body
+            'body' => $data->body,
+            'user_id' => $userId,
         ]);
 
         return $comment;

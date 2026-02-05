@@ -1,12 +1,12 @@
 <template>
   <div class="border-t pt-6">
-    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Comentários</h3>
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Comments</h3>
 
-    <div class="mb-6">
+    <div v-if="currentUser" class="mb-6">
       <form @submit.prevent="submitComment">
         <textarea
           v-model="newComment"
-          placeholder="Adicione um comentário..."
+          placeholder="Add a comment..."
           class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           rows="3"
         ></textarea>
@@ -15,15 +15,19 @@
           :disabled="!newComment.trim() || loading"
           class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition"
         >
-          {{ loading ? 'Enviando...' : 'Comentar' }}
+          {{ loading ? 'Posting...' : 'Comment' }}
         </button>
         <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
       </form>
     </div>
 
+    <div v-else class="mb-6 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg">
+      <p class="text-sm text-blue-700 dark:text-blue-200">Sign in to comment</p>
+    </div>
+
     <div class="space-y-4">
       <div v-if="comments.length === 0" class="text-gray-500 text-center py-4">
-        Nenhum comentário ainda
+        No comments yet
       </div>
 
       <div
@@ -32,14 +36,15 @@
         class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
       >
         <div class="flex justify-between items-start mb-2">
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ formatDate(comment.createdAt) }}
-          </p>
+          <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ comment.author_name }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(comment.created_at) }}</p>
+          </div>
           <span
-            v-if="isArchived(comment.createdAt)"
+            v-if="isArchived(comment.created_at)"
             class="text-xs bg-gray-400 text-white px-2 py-1 rounded"
           >
-            Arquivado
+            Archived
           </span>
         </div>
         <p class="text-gray-800 dark:text-gray-200">{{ formatBody(comment.body) }}</p>
@@ -50,10 +55,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useAuth } from '../composables/useAuth.js';
 
 const props = defineProps({
   postId: Number,
 });
+
+const { currentUser } = useAuth();
 
 const comments = ref([]);
 const newComment = ref('');
@@ -69,7 +77,7 @@ const fetchComments = async () => {
     const response = await window.axios.get(`/api/v1/posts/${props.postId}/comments`);
     comments.value = response.data;
   } catch (err) {
-    console.error('Erro ao carregar comentários:', err);
+    console.error('Error loading comments:', err);
   }
 };
 
@@ -87,7 +95,7 @@ const submitComment = async () => {
     comments.value.push(response.data);
     newComment.value = '';
   } catch (err) {
-    error.value = err.response?.data?.message || 'Erro ao adicionar comentário';
+    error.value = err.response?.data?.message || 'Error adding comment';
   } finally {
     loading.value = false;
   }
