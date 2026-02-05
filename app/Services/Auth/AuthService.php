@@ -154,14 +154,51 @@ class AuthService
             'exp' => time() + 86400, // 24 horas
         ]));
 
+        $secret = $this->getSecretKey();
         $signature = base64_encode(hash_hmac(
             'sha256',
             "$header.$payload",
-            config('app.key'),
+            $secret,
             true
         ));
 
         return "$header.$payload.$signature";
+    }
+
+    /**
+     * Get the secret key for JWT signing
+     * Handles base64-encoded keys like 'base64:xxx'
+     */
+    private function getSecretKey(): string
+    {
+        $key = config('app.key');
+        if (str_starts_with($key, 'base64:')) {
+            return base64_decode(substr($key, 7));
+        }
+        return $key;
+    }
+
+    /**
+     * Get user information by ID
+     * Used by other services to get user data
+     */
+    public function getUserInfo(int $userId): array
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return [
+                'id' => $userId,
+                'name' => 'Unknown',
+                'email' => null,
+            ];
+        }
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ];
     }
 
     /**

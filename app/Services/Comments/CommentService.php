@@ -8,12 +8,17 @@ use App\DTOs\Requests\Comments\GetCommentRequestDTO;
 use App\DTOs\Requests\Comments\UpdateCommentRequestDTO;
 use App\DTOs\Requests\Comments\DeleteCommentRequestDTO;
 use App\Models\Comments\Comment;
+use App\Services\MessageQueue\ServiceMessenger;
 
 class CommentService
 {
     public function getCommentsByPost(GetCommentByPostIdDTO $data)
     {
-        return Comment::where('post_id', $data->post_id)->get();
+        $comments = Comment::where('post_id', $data->post_id)->get();
+        return $comments->map(function ($comment) {
+            $this->enrichCommentWithAuthor($comment);
+            return $comment;
+        });
     }
 
     public function createComment(StoreCommentDTO $data, int $userId): Comment
@@ -24,12 +29,14 @@ class CommentService
             'user_id' => $userId,
         ]);
 
+        $this->enrichCommentWithAuthor($comment);
         return $comment;
     }
 
     public function getCommentById(GetCommentRequestDTO $data): Comment
     {
         $comment = Comment::findOrFail($data->id);
+        $this->enrichCommentWithAuthor($comment);
         return $comment;
     }
 
@@ -44,7 +51,17 @@ class CommentService
         $comment->fill($attributes);
         $comment->save();
 
+        $this->enrichCommentWithAuthor($comment);
         return $comment;
+    }
+
+    private function enrichCommentWithAuthor($comment)
+    {
+        // Use ServiceMessenger to get user info from Auth service
+        $userInfo = ServiceMessenger::send('auth', 'getUserInfo', ['user_id' => $comment->user_id]);
+
+        // Add author_name as a dynamic attribute
+        $comment->author_name = $userInfo['name'];
     }
 
     public function deleteComment(DeleteCommentRequestDTO $data): void

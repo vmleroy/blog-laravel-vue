@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::connection('rbac_db')->create('role_permissions', function (Blueprint $table) {
+        Schema::create('role_permissions', function (Blueprint $table) {
             $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('permission_id');
             $table->unique(['role_id', 'permission_id']);
@@ -22,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::connection('rbac_db')->dropIfExists('role_permissions');
+        Schema::dropIfExists('role_permissions');
     }
 };

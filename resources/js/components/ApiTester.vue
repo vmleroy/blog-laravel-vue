@@ -142,6 +142,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import gatewayApi from '../api/gatewayApi.js';
 
 const results = ref({
   getAllPosts: null,
@@ -166,53 +167,53 @@ const newComment = ref({
 const getAllPosts = async () => {
   try {
     error.value = '';
-    const response = await window.axios.get('/api/v1/posts');
-    results.value.getAllPosts = response.data;
+    const response = await gatewayApi.posts.getAll();
+    results.value.getAllPosts = response;
   } catch (err) {
-    error.value = `GET /api/v1/posts: ${err.response?.data?.message || err.message}`;
+    error.value = `GET /gateway/posts: ${err.message}`;
   }
 };
 
 const getPostById = async () => {
   try {
     error.value = '';
-    const response = await window.axios.get(`/api/v1/posts/${postId.value}`);
-    results.value.getPostById = response.data;
+    const response = await gatewayApi.posts.getById(postId.value);
+    results.value.getPostById = response;
   } catch (err) {
-    error.value = `GET /api/v1/posts/${postId.value}: ${err.response?.data?.message || err.message}`;
+    error.value = `GET /gateway/posts/${postId.value}: ${err.message}`;
   }
 };
 
 const createPost = async () => {
   try {
     error.value = '';
-    const response = await window.axios.post('/api/v1/posts', newPost.value);
-    results.value.createPost = response.data;
+    const response = await gatewayApi.posts.create(newPost.value);
+    results.value.createPost = response;
   } catch (err) {
-    error.value = `POST /api/v1/posts: ${err.response?.data?.message || err.message}`;
+    error.value = `POST /gateway/posts: ${err.message}`;
   }
 };
 
 const getCommentsByPost = async () => {
   try {
     error.value = '';
-    const response = await window.axios.get(`/api/v1/posts/${commentPostId.value}/comments`);
-    results.value.getComments = response.data;
+    const response = await gatewayApi.comments.getByPostId(commentPostId.value);
+    results.value.getComments = response;
   } catch (err) {
-    error.value = `GET /api/v1/posts/${commentPostId.value}/comments: ${err.response?.data?.message || err.message}`;
+    error.value = `GET /gateway/comments?post_id=${commentPostId.value}: ${err.message}`;
   }
 };
 
 const createComment = async () => {
   try {
     error.value = '';
-    const response = await window.axios.post(
-      `/api/v1/posts/${newComment.value.postId}/comments`,
-      { body: newComment.value.body }
-    );
-    results.value.createComment = response.data;
+    const response = await gatewayApi.comments.create({
+      post_id: newComment.value.postId,
+      body: newComment.value.body,
+    });
+    results.value.createComment = response;
   } catch (err) {
-    error.value = `POST /api/v1/posts/${newComment.value.postId}/comments: ${err.response?.data?.message || err.message}`;
+    error.value = `POST /gateway/comments: ${err.message}`;
   }
 };
 </script>

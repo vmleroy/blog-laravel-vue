@@ -132,8 +132,11 @@
 import { ref } from 'vue';
 import Button from '../ui/Button.vue';
 import Input from '../ui/Input.vue';
+import { useAuth } from '../../composables/useAuth.js';
 
 const emit = defineEmits(['login']);
+
+const { login, register } = useAuth();
 
 const isLogin = ref(true);
 const loading = ref(false);
@@ -158,23 +161,10 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const response = await window.axios.post('/api/v1/auth/login', loginForm.value);
-
-    // Save token and user data
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify({
-      id: response.data.user_id,
-      name: response.data.name,
-      email: response.data.email,
-      role: response.data.role,
-    }));
-
-    // Add token to axios headers
-    window.axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-
-    emit('login', response.data);
+    const response = await login(loginForm.value.email, loginForm.value.password);
+    emit('login', response);
   } catch (err) {
-    error.value = err.response?.data?.error || 'Error signing in. Please check your credentials.';
+    error.value = err.message || 'Error signing in. Please check your credentials.';
   } finally {
     loading.value = false;
   }
@@ -186,23 +176,14 @@ const handleRegister = async () => {
   loading.value = true;
 
   try {
-    const response = await window.axios.post('/api/v1/auth/register', registerForm.value);
-
-    // Save token and user data
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify({
-      id: response.data.user_id,
-      name: response.data.name,
-      email: response.data.email,
-      role: response.data.role,
-    }));
-
-    // Add token to axios headers
-    window.axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-
-    emit('login', response.data);
+    const response = await register(
+      registerForm.value.name,
+      registerForm.value.email,
+      registerForm.value.password
+    );
+    emit('login', response);
   } catch (err) {
-    error.value = err.response?.data?.error || 'Error registering. Try again.';
+    error.value = err.message || 'Error registering. Try again.';
   } finally {
     loading.value = false;
   }

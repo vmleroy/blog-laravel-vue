@@ -54,7 +54,7 @@
               </Button>
               <Button
                 v-if="canDeleteComment(comment)"
-                @click="deleteComment(comment.id)"
+                @click="deleteCommentHandler(comment.id)"
                 variant="danger"
                 size="sm"
               >
@@ -99,14 +99,15 @@ import { useAuth } from '../../composables/useAuth.js';
 import Button from '../ui/Button.vue';
 import Input from '../ui/Input.vue';
 import Badge from '../ui/Badge.vue';
+import { useComments } from '../../composables/useComments.js';
 
 const props = defineProps({
   postId: Number,
 });
 
 const { currentUser } = useAuth();
+const { comments, createComment, updateComment, deleteComment, fetchCommentsByPost } = useComments();
 
-const comments = ref([]);
 const newComment = ref('');
 const loading = ref(false);
 const error = ref('');
@@ -119,8 +120,7 @@ onMounted(async () => {
 
 const fetchComments = async () => {
   try {
-    const response = await window.axios.get(`/api/v1/posts/${props.postId}/comments`);
-    comments.value = response.data;
+    await fetchCommentsByPost(props.postId);
   } catch (err) {
     console.error('Error loading comments:', err);
   }
@@ -133,14 +133,10 @@ const submitComment = async () => {
   error.value = '';
 
   try {
-    const response = await window.axios.post(
-      `/api/v1/posts/${props.postId}/comments`,
-      { body: newComment.value }
-    );
-    comments.value.push(response.data);
+    await createComment(props.postId, newComment.value);
     newComment.value = '';
   } catch (err) {
-    error.value = err.response?.data?.message || 'Error adding comment';
+    error.value = err.message || 'Error adding comment';
   } finally {
     loading.value = false;
   }
@@ -162,14 +158,7 @@ const saveEditComment = async (commentId) => {
   if (!editingCommentBody.value.trim()) return;
 
   try {
-    await window.axios.put(
-      `/api/v1/comments/${commentId}`,
-      { body: editingCommentBody.value }
-    );
-    const comment = comments.value.find(c => c.id === commentId);
-    if (comment) {
-      comment.body = editingCommentBody.value;
-    }
+    await updateComment(commentId, editingCommentBody.value);
     editingCommentId.value = null;
     editingCommentBody.value = '';
   } catch (err) {
@@ -177,13 +166,10 @@ const saveEditComment = async (commentId) => {
   }
 };
 
-const deleteComment = async (commentId) => {
+const deleteCommentHandler = async (commentId) => {
   if (confirm('Are you sure you want to delete this comment?')) {
     try {
-      await window.axios.delete(
-        `/api/v1/comments/${commentId}`
-      );
-      comments.value = comments.value.filter(c => c.id !== commentId);
+      await deleteComment(commentId);
     } catch (err) {
       console.error('Error deleting comment:', err);
     }

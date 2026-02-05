@@ -7,12 +7,17 @@ use App\DTOs\Requests\Posts\GetPostRequestDTO;
 use App\DTOs\Requests\Posts\UpdatePostRequestDTO;
 use App\DTOs\Requests\Posts\DeletePostRequestDTO;
 use App\Models\Posts\Post;
+use App\Services\MessageQueue\ServiceMessenger;
 
 class PostService
 {
     public function getAllPosts()
     {
-        return Post::all();
+        $posts = Post::all();
+        return $posts->map(function ($post) {
+            $this->enrichPostWithAuthor($post);
+            return $post;
+        });
     }
 
     public function createPost(StorePostRequestDTO $data, int $userId): Post
@@ -23,12 +28,14 @@ class PostService
             'user_id' => $userId,
         ]);
 
+        $this->enrichPostWithAuthor($post);
         return $post;
     }
 
     public function getPostById(GetPostRequestDTO $data): Post
     {
         $post = Post::findOrFail($data->id);
+        $this->enrichPostWithAuthor($post);
         return $post;
     }
 
@@ -44,7 +51,17 @@ class PostService
         $post->fill($attributes);
         $post->save();
 
+        $this->enrichPostWithAuthor($post);
         return $post;
+    }
+
+    private function enrichPostWithAuthor($post)
+    {
+        // Use ServiceMessenger to get user info from Auth service
+        $userInfo = ServiceMessenger::send('auth', 'getUserInfo', ['user_id' => $post->user_id]);
+
+        // Add author_name as a dynamic attribute
+        $post->author_name = $userInfo['name'];
     }
 
     public function deletePost(DeletePostRequestDTO $data): void

@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::connection('rbac_db')->create('content_access', function (Blueprint $table) {
+        Schema::create('content_access', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('content_id');
             $table->string('content_type');
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::connection('rbac_db')->dropIfExists('content_access');
+        Schema::dropIfExists('content_access');
     }
 };

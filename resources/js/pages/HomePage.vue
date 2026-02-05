@@ -99,6 +99,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '../composables/useAuth.js';
+import { usePosts } from '../composables/usePosts.js';
 import Modal from '../components/ui/Modal.vue';
 import Button from '../components/ui/Button.vue';
 import AuthForm from '../components/auth/AuthForm.vue';
@@ -108,8 +109,8 @@ import PostDetail from '../components/post/PostDetail.vue';
 import ApiTester from '../components/ApiTester.vue';
 
 const { isAuthenticated, currentUser, initializeAuth, setAuth, logout } = useAuth();
+const { posts, fetchPosts, deletePost } = usePosts();
 
-const posts = ref([]);
 const selectedPost = ref(null);
 const showTester = ref(false);
 const showUserMenu = ref(false);
@@ -137,11 +138,9 @@ const handleLogout = async () => {
 
 const loadPosts = async () => {
   try {
-    const response = await window.axios.get('/api/v1/posts');
-    posts.value = response.data;
+    await fetchPosts();
   } catch (error) {
-    console.error('Erro ao carregar posts:', error);
-    posts.value = [];
+    console.error('Error loading posts:', error);
   }
 };
 
@@ -163,7 +162,7 @@ const handleEditPost = (post) => {
 const handleDeletePost = async (postId) => {
   if (confirm('Are you sure you want to delete this post?')) {
     try {
-      await window.axios.delete(`/api/v1/posts/${postId}`);
+      await deletePost(postId);
       posts.value = posts.value.filter(p => p.id !== postId);
     } catch (error) {
       console.error('Error deleting post:', error);

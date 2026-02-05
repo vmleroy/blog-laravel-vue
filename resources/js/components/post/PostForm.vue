@@ -28,6 +28,7 @@
 import { ref, reactive } from 'vue';
 import Input from '../ui/Input.vue';
 import { useNotification } from '../../composables/useNotification.js';
+import { usePosts } from '../../composables/usePosts.js';
 
 const props = defineProps({
   post: Object,
@@ -40,6 +41,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'saved']);
 
 const { success, error } = useNotification();
+const { createPost, updatePost } = usePosts();
 const loading = ref(false);
 const errors = reactive({});
 
@@ -57,25 +59,17 @@ const handleSubmit = async () => {
   loading.value = true;
 
   try {
-    const url = props.isEditing ? `/api/v1/posts/${props.post.id}` : '/api/v1/posts';
-    const method = props.isEditing ? 'put' : 'post';
-
-    const response = await window.axios[method](url, formData.value);
+    let response;
+    if (props.isEditing) {
+      response = await updatePost(props.post.id, formData.value);
+    } else {
+      response = await createPost(formData.value.title, formData.value.content);
+    }
 
     success(props.isEditing ? 'Post updated successfully!' : 'Post created successfully!');
-    emit('saved', response.data);
+    emit('saved', response);
   } catch (err) {
-    if (err.response?.data?.errors) {
-      // Laravel returns errors as arrays, extract first message for each field
-      const validationErrors = err.response.data.errors;
-      Object.keys(validationErrors).forEach((key) => {
-        errors[key] = Array.isArray(validationErrors[key]) 
-          ? validationErrors[key][0] 
-          : validationErrors[key];
-      });
-    } else {
-      error(err.response?.data?.error || 'Error saving post');
-    }
+    error(err.message || (props.isEditing ? 'Error updating post' : 'Error creating post'));
   } finally {
     loading.value = false;
   }
